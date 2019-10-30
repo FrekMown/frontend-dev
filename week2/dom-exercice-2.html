@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Indicators of the World Bank</title>
+  <style>
+    html,
+    body,
+    .container {
+      height: 99%;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .container>div {
+      border-right: 1px solid black;
+      flex-basis: 33%;
+      overflow: auto;
+    }
+
+    .topic {
+      padding: 1vh 1vw;
+    }
+
+    div>h2, div>h3, div>h5 {
+      text-align: center;
+    }
+
+    .topic:hover, .indicator:hover {
+      background-color: indigo;
+      color: cyan;
+      cursor: pointer;
+    }
+
+    .indicator {
+      padding: 0.5vh 0.5vw;
+    }
+
+    .indicators-detail .description {
+      font-style: italic;
+      padding: 1vh 1vw;
+      background: lightgray;
+      border: 2px solid black;
+      border-radius: 5px;
+    }
+
+    .indicators-detail .source {
+      font-size: 0.7rem;
+      text-align: right;
+      margin: 2vh 0.2vw;
+    }
+
+
+
+  </style>
+</head>
+
+<body>
+  <!-- <div><em>Note: change on hover is quite tricky, you can change selected indicator on click</em></div> -->
+  <div class="container">
+    <div class="topics">
+      <h2>Topics</h2>
+    </div>
+    <div class="indicators">
+      <h2>Indicators</h2>
+    </div>
+    <div class="indicators-detail">
+      <h2>Indicators Detail</h2>
+    </div>
+  </div>
+
+
+
+  <script>
+    // Number of indicators
+    const nIndicators = 25;
+    // list of all indicators
+    let indicators = null;
+    // Definition of elements
+    const topicsDiv = document.querySelector(".container .topics");
+    const indicatorsDiv = document.querySelector(".container .indicators");
+    const indicatorDetailsDiv = document.querySelector('.container .indicators-detail');
+
+    function addTopics(topics) {
+      topics.forEach(topic => {
+        let topicElem = document.createElement('div');
+        topicElem.classList.add("topic");
+        topicElem.innerHTML = `<strong>${topic.id}</strong>: ${topic.value}`;
+        topicElem.dataset.topicId = topic.id;
+        topicsDiv.append(topicElem);
+      });
+    }
+    // Fetch all topics and add them to .container .topics
+    let topicsURL = `https://api.worldbank.org/v2/topic?format=json`;
+    fetch(topicsURL)
+      .then(resp => resp.json())
+      .then(data => addTopics(data[1]));
+
+    // Add Indicators when topic clicked
+    topicsDiv.onclick = e => {
+      let topicId = e.target.dataset.topicId;
+      if (topicId) {
+        // Load indicators
+        let topicIndicatorURL = `https://api.worldbank.org/v2/topic/${topicId}/indicator?format=json&per_page=${nIndicators}`;
+        fetch(topicIndicatorURL)
+          .then(resp => resp.json())
+          .then(data => {
+            addIndicators(data[1])
+            indicators = data[1]; 
+          });
+      }
+    };
+
+    function addIndicators(indicators) {
+      // Clear all previous indicators
+      indicatorsDiv.innerHTML = "<h2>Indicators<h2>";
+      indicators.forEach(indicator => {
+        indicatorElem = document.createElement("div");
+        indicatorElem.classList.add("indicator");
+        indicatorElem.innerHTML = `<em>${indicator.name}</em>`;
+        indicatorElem.dataset.indicatorId = indicator.id;
+        indicatorsDiv.append(indicatorElem);
+      })
+    }
+
+    // when hover on indicator give details
+    indicatorsDiv.onmouseover = e => {
+      let indicatorId = e.target.dataset.indicatorId;
+      if(indicatorId) {
+        changeChosenIndicator(indicatorId);
+      }
+    };
+
+    function changeChosenIndicator(indicatorId){
+      // Clean previous indicator
+      indicatorDetailsDiv.innerHTML = "<h2>Indicators Detail</h2>";
+      let indicator = indicators.filter(indicator => indicator.id === indicatorId)[0];
+
+      let titleIdElem = document.createElement('h3');
+      titleIdElem.textContent = indicator.id;
+      indicatorDetailsDiv.append(titleIdElem);
+
+      let titleNameElem = document.createElement('h5');
+      titleNameElem.innerHTML = `<em>${indicator.name}</em>`
+      indicatorDetailsDiv.append(titleNameElem);
+
+      let descriptionElem = document.createElement('div');
+      descriptionElem.classList.add('description');
+      descriptionElem.textContent = indicator.sourceNote;
+      indicatorDetailsDiv.append(descriptionElem);
+
+      let sourceElem = document.createElement('div');
+      sourceElem.classList.add('source');
+      sourceElem.textContent = indicator.sourceOrganization;
+      indicatorDetailsDiv.append(sourceElem);
+    }
+
+
+
+  </script>
+</body>
+
+</html>

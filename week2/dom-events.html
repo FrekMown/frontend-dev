@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Modifying Node Content</title>
+    <style>
+        p.class1 {
+            color: green;
+        }
+
+        p.class2 {
+            color: red;
+        }
+
+        .firstDiv {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="firstDiv">
+        <p>First paragraph</p>
+        <p>Second Paragraph</p>
+        <p class="class1">Third Paragraph</p>
+        <a href="http://nowhere.com">
+            Let's go to Google!
+        </a>
+    </div>
+    <p>Fourth Paragraph</p>
+    <p>Fifth Paragraph</p>
+    <input type="text">
+    <br>
+    <select>
+        <option value="">Select something</option>
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+    </select>
+
+    <script>
+        let pDiv = document.querySelectorAll(".firstDiv p");
+        pDiv[0].classList.toggle("class1");
+        pDiv[1].classList.add("class2");
+
+        pDiv[2].classList.toggle("class1")
+
+        let a = document.querySelector("a")
+        a.href = "http://www.google.com";
+        a.onmouseenter = e => console.log("hey!", e);
+        document.querySelector("input").value = "Welcome!";
+
+        // Let's choose p tags directly below body
+        let pNoDiv = document.querySelectorAll("body>p");
+        pNoDiv[0].innerHTML =
+            "<strong>First outside paragraph</strong>";
+        pNoDiv[1].textContent =
+            "<strong>Second outside paragraph</strong>";
+
+
+        let select = document.querySelector('select');
+        select.onchange = (event) => console.log(event.target.value);
+
+        let div = document.createElement('div');
+        div.textContent = "holaaaaa";
+        div.dataset.aBeautifulTest = "hello";
+
+        select.after(div);
+
+
+    </script>
+</body>
+
+</html>

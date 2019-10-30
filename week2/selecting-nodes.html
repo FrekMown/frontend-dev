@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Selecting Nodes</title>
+</head>
+
+<body>
+<h1>Selecting Nodes</h1>
+
+<p>Hey guys !</p>
+
+<ul>
+  <li>Oh yes</li>
+  <li class="class1">Oh right</li>
+  <li>One more time!</li>
+  <li>Tell me more!</li>
+</ul>
+
+<script>
+  let p = document.querySelector('p');
+  console.dir(p);
+
+  let lis = document.querySelectorAll('li.class1');
+  for (let li of lis) {
+    console.dir(li);
+  }
+</script>
+</body>
+
+</html>

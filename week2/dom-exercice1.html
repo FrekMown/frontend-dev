@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Countries of the World</title>
+  <style>
+    h1 {
+      text-align: center;
+    }
+    select {
+      display: block;
+      margin: auto;
+    }
+    .country {
+      margin: 5vh 10vw;
+      border: 2px solid black;
+      padding: 5px;
+      border-radius: 10px;
+      background: lightblue;
+      text-align: center;
+    }
+
+    #flag {
+      display: block;
+      margin: 5px auto;
+      width: 40%;
+    }
+
+    .country li {
+      display: block;
+      list-style-type: none;
+      margin: 4px 0;
+    }
+
+    .country li:hover {
+      background: darkblue;
+      color: lightcoral;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Countries of the World</h1>
+  <!-- Select menu -->
+  <select>
+    <option value="initial" selected>Please Choose a country</option>
+  </select>
+  <div class="country">
+    <img src="" alt="Flag" id="flag">
+    <ul>
+      <li><strong>English Name: </strong><span id="countryName"></span></li>
+      <li><strong>Native Name: </strong><span id="nativeName"></span></li>
+      <li><strong>Languages: </strong><span id="languages"></span></li>
+      <li><strong>Subregion: </strong><span id="subregion"></span></li>
+    </ul>
+  </div>
+
+  <script>
+    const select = document.querySelector("select");
+
+    // Fetch all countries and add them as options in select menu
+    let countriesURL = "https://restcountries.eu/rest/v2/all?fields=name;alpha3Code";
+    fetch(countriesURL)
+      .then(res => res.json())
+      .then(data => addCountryOptions(data));
+
+
+    function addCountryOptions(countries) {
+      
+      countries.forEach(country => {
+        let optionElem = document.createElement('option');
+        optionElem.value = country.alpha3Code;
+        optionElem.textContent = country.name;
+        select.append(optionElem);      
+      });      
+    }
+
+    // Load New country when selected
+    async function changeCountryHandler(countryCode) {
+      let url = `https://restcountries.eu/rest/v2/alpha/${countryCode}?fields=name;nativeName;languages;subregion;flag`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          data.parsedLang = data.languages.map(lang => lang.nativeName).join(', ');
+          return data;
+        })
+        .then(data => changeCountryInfo(data));
+    }
+
+    function changeCountryInfo(country) {
+      flag.src = country.flag;
+      countryName.textContent = country.name;
+      nativeName.textContent = country.nativeName;
+      languages.textContent = country.parsedLang;
+      subregion.textContent = country.subregion;
+    }
+
+    select.onchange = e => changeCountryHandler(e.target.value);
+  </script>
+</body>
+
+</html>

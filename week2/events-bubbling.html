@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Events Bubbling</title>
+
+  <style>
+    body {
+      padding: 10vh 10vw;
+      font-size: 2em;
+      width: 30vw;
+    }
+    form {
+      /* display: block; */
+      padding: 2vh 2vw;
+      border: 1px solid black;
+    }
+    div {
+      padding: 2vh 2vw;
+      border: 1px solid red;
+    }
+    p {
+      padding: 2vh 2vw;
+      border: 1px solid blue;
+    }
+  </style>
+
+</head>
+
+<body>
+  <form>FORM
+    <div>DIV
+      <p>P</p>
+    </div>
+  </form>
+
+  <script>
+    let div = document.querySelector('div');
+    let form = document.querySelector('form');
+    let p = document.querySelector('p');
+
+    div.onclick = e => console.log('div', e.target, e.currentTarget);
+    form.onclick = e => console.log('form', e.target, e.currentTarget);
+    p.onclick = e => console.log('p', e.target, e.currentTarget);
+  </script>
+</body>
+
+</html>
